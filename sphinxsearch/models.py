@@ -13,6 +13,12 @@ class SphinxQuerySet(QuerySet):
         kwargs.setdefault('query', sql.SphinxQuery(model))
         super(SphinxQuerySet, self).__init__(model, **kwargs)
 
+    def with_meta(self):
+        """ Allows to execute SHOW META immediately after main query."""
+        clone = self._clone()
+        setattr(clone.query, 'with_meta', True)
+        return clone
+
     def _filter_or_exclude(self, negate, *args, **kwargs):
         args = list(args)
         kwargs = copy(kwargs)

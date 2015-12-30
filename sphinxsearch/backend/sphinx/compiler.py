@@ -128,14 +128,13 @@ class SphinxQLCompiler(compiler.SQLCompiler):
             group_by += group_by_ordering
         sql = re.sub(r'GROUP BY ((\w+)(, \w+)*)', group_by, sql)
 
-        # adding sphinxsearch OPTION clause
+        # adding sphinx OPTION clause
+        # TODO: syntax check for option values is not performed
         options = getattr(self.query, 'options', None)
         if options:
-            keys = sorted(options.keys())
-            values = [options[k] for k in keys]
             sql += ' OPTION %s' % ', '.join(
-                ["%s=%%s" % i for i in keys]) or ''
-            args += tuple(values)
+                ["%s=%s" % i for i in options.items()]) or ''
+
         return sql, args
 
     def get_group_ordering(self):
